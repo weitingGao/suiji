@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>随机生成器</title>
+</head>
+<body>
+  <div class="random_box">
+    <div class="input_box">
+      <h1 class="title">随机数生成器</h1>
+      <label for="num1">请输入随机数的个数:</label>
+      <input type="number" id="num1" name="num1" value=""><br><br>
+      <label for="num2">请输入随机数的下限:</label>
+      <input type="number" id="num2" name="num2" value=""><br><br>
+      <label for="num3">请输入随机数的上限:</label>
+      <input type="number" id="num3" name="num3" value=""><br><br>
+      <button id="btn" class="btn">开始生成</button>
+      <p id="result" class="result">结果：</p>
+    </div>
+    <div class="input_box input_box2">
+      <h1 class="title">随机排序器</h1>
+      <label for="num4">请输入数量:</label>
+      <input type="number" id="num4" name="num4" value="" placeholder="(默认1-N个数字)"><br><br>
+      <label for="num5">分成多少组:</label>
+      <input type="number" id="num5" name="num5" value="" placeholder=""><br><br>
+      <label for="num6">1组多少个:</label>
+      <input type="number" id="num6" name="num6" value="" placeholder="（该值可为空）"><br><br>
+      <button id="btn2" class="btn">开始生成</button>
+      <p id="result2" class="result">结果：</p>
+    </div>
+  </div>
+</body>
+<style>
+  body{
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .random_box{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction:row;
+    flex-wrap: wrap;
+    justify-content:space-around;
+  }
+  .title{
+    color: red;
+    width: 500px;
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  .input_box{
+    width: 500px;
+    height: 400px;
+    display: block;
+    /* border-right: 3px solid #000; */
+    /* margin: auto; */
+  }
+  .input_box2{
+    margin-left: 50px;
+  }
+  input{
+    font-size: 25px;
+    margin-bottom: 10px;
+  }
+  input::placeholder {
+    font-size: 16px;
+  }
+  .btn{
+    width:200px;
+    height: 50px;
+    font-size: 25px;
+    display: block;
+    margin: auto;
+  }
+  .result{
+    font-size: 30px;
+    color: red;
+    width: 100%;
+  }
+</style>
+<script>
+  var num1 = document.getElementById("num1")
+  var num2 = document.getElementById("num2")
+  var num3 = document.getElementById("num3")
+  var num4 = document.getElementById("num4")
+  var num5 = document.getElementById("num5")
+  var num6 = document.getElementById("num6")
+  var btn = document.getElementById("btn")
+  var btn2 = document.getElementById("btn2")
+  var result = ''
+  var result2 = ''
+  // 随机数生成
+  function generateRandomNumbers(n, min, max) {
+    let randomNumbers = [];
+    if (n < 1 || min > max || min == max) {
+      return "Invalid parameters"
+    }
+    if ((max - min) / Math.pow(10, -2) < n) return "Invalid parameters"
+    for (let i = 0; i < n; i++) {
+      let randomNumber = (Math.random() * (max - min) + min).toFixed(2);
+      if (randomNumbers.includes(randomNumber)) {
+        i--;
+      } else {
+        randomNumbers.push(randomNumber);
+      }
+    }
+    return randomNumbers;
+  }
+  
+  btn.addEventListener("click", function() {
+    result = ''
+    let arr = generateRandomNumbers(Number(num1.value), Number(num2.value), Number(num3.value))
+    console.log(arr)
+    if (arr == "Invalid parameters") {
+      alert('请输入正确格式')
+    } else {
+      arr.forEach(function(num) {
+        result = result.concat(num + "， ")
+      });
+      document.getElementById("result").innerHTML = '结果：'+ result
+    }
+  })
+
+// 随机排序
+function randomSort(n, k, m) {
+  if (n < k || n < m || !n || !k) {
+    return "Invalid parameters"
+  }
+  let resultArr = [];
+  let data = Array.from({length: n}, (v, i) => i + 1); // 创建一个数组，包含从1到n的正整数
+  function compare(a, b) { // 定义一个比较函数，用于随机排序
+    return Math.random() - 0.5
+  }
+  data.sort(compare)
+  // 如果m为空，就用n除以k得到每组的平均个数
+  if (!m) {
+    m = Math.floor(n / k);
+  }
+  for (let i = 0; i < k; i++) { //循环k次，每次从数据中取出m个元素，放入结果数组中
+    if (i === k - 1) {
+      resultArr.push(data);
+      break;
+    }
+    // 否则，从数据中截取前m个元素，放入结果数组中
+    else {
+      resultArr.push(data.slice(0, m));
+      // 更新数据数组，去掉已经取出的元素
+      data = data.slice(m);
+    }
+  }
+  return resultArr
+}
+
+btn2.addEventListener("click", function() {
+  result2 = ''
+  let arr2 = randomSort(Number(num4.value), Number(num5.value), Number(num6.value))
+  if (arr2 == "Invalid parameters") {
+    alert('请输入正确格式')
+  } else {
+    let output = ''
+    let index = 0
+    for (let subArr of arr2) {
+      for (let element of subArr){
+        output += element + '，'
+      }
+      index ++
+      if (output) {
+        result2 = result2.concat(`第${index}组：` + output + '<br>')
+      }
+      output = ''
+    }
+    document.getElementById("result2").innerHTML = '结果：<br>'+ result2
+    console.log(result2)
+  }
+})
+
+</script>
+</html>
